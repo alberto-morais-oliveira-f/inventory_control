@@ -62,6 +62,7 @@ class ProcessSale implements ShouldQueue
         $sale = $saleRepository->getById($this->saleId);
         if (! $sale) {
             Log::error("Venda ({$this->saleId}) não encontrada!");
+            throw new RuntimeException("Venda ({$this->saleId}) não encontrada!");
         }
 
         return $sale;
