@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Repositories\Contracts\InventoryRepositoryInterface;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class InventoryTest extends TestCase
@@ -20,7 +21,8 @@ class InventoryTest extends TestCase
         $this->createUserSanctum();
     }
 
-    public function test_create_inventory_success(): void
+    #[Test]
+    public function it_create_inventory_success(): void
     {
         $costPrice = $this->faker->randomFloat(2, 10, 100);
 
@@ -36,7 +38,8 @@ class InventoryTest extends TestCase
         $response->assertStatus(Response::HTTP_OK);
     }
 
-    public function test_create_inventory_validate_error(): void
+    #[Test]
+    public function it_create_inventory_validate_error(): void
     {
         $costPrice = $this->faker->randomFloat(2, 10, 100);
 
@@ -55,7 +58,8 @@ class InventoryTest extends TestCase
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    public function test_show_inventory_success(): void
+    #[Test]
+    public function it_show_inventory_success(): void
     {
         Inventory::factory(10)->create();
         $response = $this->getJson(route('inventory.index'));

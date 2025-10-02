@@ -25,7 +25,6 @@ class MakeRepository extends Command
     {
         $name = $this->argument('name');
 
-        // Normalize the name for repository and interface
         $normalizedPath = str_replace('\\', '/', $name);
         $className = basename($normalizedPath);
         $namespacePath = dirname($normalizedPath);
@@ -33,12 +32,10 @@ class MakeRepository extends Command
         $repositoryNamespace = 'App\\Repositories'.($namespacePath !== '.' ? '\\'.str_replace('/', '\\', $namespacePath) : '');
         $interfaceNamespace = 'App\\Repositories\\Contracts'.($namespacePath !== '.' ? '\\'.str_replace('/', '\\', $namespacePath) : '');
 
-        // Paths
         $repositoryPath = app_path("Repositories/{$normalizedPath}Repository.php");
         $interfacePath = app_path("Repositories/Contracts/{$normalizedPath}RepositoryInterface.php");
         $providerPath = app_path('Providers/RepositoryServiceProvider.php');
 
-        // Create Repository
         if (! File::exists($repositoryPath)) {
             File::ensureDirectoryExists(dirname($repositoryPath));
             File::put($repositoryPath, $this->getRepositoryStubContent($className, $repositoryNamespace, $interfaceNamespace));
@@ -47,7 +44,6 @@ class MakeRepository extends Command
             $this->warn("Repository already exists: {$repositoryPath}");
         }
 
-        // Create Interface
         if (! File::exists($interfacePath)) {
             File::ensureDirectoryExists(dirname($interfacePath));
             File::put($interfacePath, $this->getInterfaceStubContent($className, $interfaceNamespace));
@@ -56,7 +52,6 @@ class MakeRepository extends Command
             $this->warn("Interface already exists: {$interfacePath}");
         }
 
-        // Register in Repository Provider
         if (File::exists($providerPath)) {
             $this->registerInProvider($providerPath, $className, $repositoryNamespace, $interfaceNamespace);
         } else {
@@ -71,7 +66,6 @@ class MakeRepository extends Command
     {
         $providerContent = File::get($providerPath);
 
-        // Add the binding in the `register` method
         $binding = "\$this->app->bind(\\{$interfaceNamespace}\\{$className}RepositoryInterface::class, \\{$repositoryNamespace}\\{$className}Repository::class);";
 
         if (! Str::contains($providerContent, $binding)) {
@@ -95,7 +89,6 @@ class MakeRepository extends Command
             $this->warn('Binding already exists in RepositoryServiceProvider -> register()');
         }
 
-        // Save changes to the provider file
         File::put($providerPath, $providerContent);
         $this->info('RepositoryServiceProvider updated successfully.');
     }

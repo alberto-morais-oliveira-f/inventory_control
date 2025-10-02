@@ -10,11 +10,12 @@ use App\Services\Interfaces\ProductServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 readonly class InventoryService implements InventoryServiceInterface
 {
-    private const CACHE_KEY_INVENTORY = 'inventory_summary';
+    public const CACHE_KEY_INVENTORY = 'inventory_summary';
 
     public function __construct(
         private InventoryRepository $inventoryRepository,
@@ -65,5 +66,21 @@ readonly class InventoryService implements InventoryServiceInterface
         });
 
         return $data;
+    }
+
+    public function validateStock(array $items): void
+    {
+        foreach ($items as $item) {
+            $productId = $item['product_id'];
+            $requested = $item['quantity'];
+
+            $stock = Inventory::where('product_id', $productId)->sum('quantity');
+
+            if ($stock < $requested) {
+                throw ValidationException::withMessages([
+                    "items" => "Estoque insuficiente para o produto {$productId}. Disponível: {$stock}"
+                ]);
+            }
+        }
     }
 }

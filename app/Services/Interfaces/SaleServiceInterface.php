@@ -2,7 +2,11 @@
 
 namespace App\Services\Interfaces;
 
+use App\Models\Sale;
+
 interface SaleServiceInterface
 {
-    // Define the methods for the SaleService
+    public function register(array $data): Sale;
+
+    public function calculateTotals(array $items, array $productsMap): array;
 }

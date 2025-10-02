@@ -25,7 +25,6 @@ class MakeService extends Command
     {
         $name = $this->argument('name');
 
-        // Normalize the name for service and interface
         $normalizedPath = str_replace('\\', '/', $name);
         $className = basename($normalizedPath);
         $namespacePath = dirname($normalizedPath);
@@ -34,12 +33,10 @@ class MakeService extends Command
         $interfaceNamespace = 'App\\Services\\Interfaces'.($namespacePath !== '.' ? '\\'.str_replace('/', '\\',
                     $namespacePath) : '');
 
-        // Paths
         $servicePath = app_path("Services/{$normalizedPath}Service.php");
         $interfacePath = app_path("Services/Interfaces/{$normalizedPath}ServiceInterface.php");
         $providerPath = app_path('Providers/ServicesServiceProvider.php');
 
-        // Create Service
         if (! File::exists($servicePath)) {
             File::ensureDirectoryExists(dirname($servicePath));
             File::put($servicePath, $this->getServiceStubContent($className, $serviceNamespace, $interfaceNamespace));
@@ -48,7 +45,6 @@ class MakeService extends Command
             $this->warn("Service already exists: {$servicePath}");
         }
 
-        // Create Interface
         if (! File::exists($interfacePath)) {
             File::ensureDirectoryExists(dirname($interfacePath));
             File::put($interfacePath, $this->getInterfaceStubContent($className, $interfaceNamespace));
@@ -57,7 +53,6 @@ class MakeService extends Command
             $this->warn("Interface already exists: {$interfacePath}");
         }
 
-        // Register in Service Provider
         if (File::exists($providerPath)) {
             $providerContent = File::get($providerPath);
 

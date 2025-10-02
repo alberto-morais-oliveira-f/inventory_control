@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
-            $table->decimal('total_amount');
+            $table->decimal('total_amount')->nullable();
             $table->decimal('total_cost')->nullable();
             $table->decimal('total_profit')->nullable();
             $table->string('status')->default('pending');

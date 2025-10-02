@@ -38,4 +38,10 @@ class InventoryRepository extends BaseRepository implements InventoryRepositoryI
             ->orderBy('p.name')
             ->get();
     }
+
+    public function countItem($productId): ?int
+    {
+        return $this->model::where('product_id', $productId)
+            ->sum('quantity');
+    }
 }

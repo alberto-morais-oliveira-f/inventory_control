@@ -13,11 +13,10 @@ return new class extends Migration {
         Schema::create('inventory', function (Blueprint $table) {
             $table->id();
             $table->integer('quantity');
-            $table->timestamp('last_updated');
+            $table->timestamp('last_updated')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
             $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
-
         });
     }
 
