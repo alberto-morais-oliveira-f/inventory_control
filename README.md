@@ -49,5 +49,46 @@ Todos os endpoints aceitam **JSON** e retornam respostas no formato padrão Lara
 
 1. Clone o repositório:
 ```bash
-git clone <repo_url>
-cd <repo_dir>
+  git clone git@github.com:alberto-morais-oliveira-f/inventory_control.git
+```
+2. Acesse o projeto:
+```bash
+cd inventory_control
+```
+3. Instale as dependências:
+```bash
+composer install
+```
+
+4. Configure o .env:
+```bash
+APP_NAME="Inventory Control"
+APP_ENV=local
+APP_KEY=base64:...
+APP_DEBUG=true
+APP_URL=http://localhost
+
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=inventory_control
+DB_USERNAME='Seu user'
+DB_PASSWORD='Sua senha'
+
+QUEUE_CONNECTION=redis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+```
+### Obs: Usei o redis para a job, mas pode usar sync ou database.
+
+5. Rode migrations e seeders:
+```bash
+php artisan queue:work
+```
+### Obs: Para verificar o processamento da venda como atualização de valores e alteração do status deve rodar a fila.
+
+5. Execute os testes unitários e de integração:
+```bash
+php artisan test
+```
