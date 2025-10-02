@@ -87,7 +87,7 @@ REDIS_PASSWORD=null
 REDIS_PORT=6379
 ```
 
-#### Obs: Usei o redis para a job, mas pode usar sync ou database.
+##### Obs: Usei o redis para a job, mas pode usar sync ou database.
 
 5. Rode migrations e seeders:
 
@@ -101,7 +101,7 @@ php artisan migrate --seed
 php artisan queue:work
 ```
 
-#### Obs: Para verificar o processamento da venda como atualização de valores e alteração do status deve rodar a fila.
+##### Obs: Para verificar o processamento da venda como atualização de valores e alteração do status deve rodar a fila.
 
 5. Execute os testes unitários e de integração:
 
