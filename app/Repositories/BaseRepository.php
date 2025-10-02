@@ -3,10 +3,8 @@
 namespace App\Repositories;
 
 use App\Repositories\Contracts\BaseRepositoryInterface;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Log;
 
 abstract class BaseRepository implements BaseRepositoryInterface
 {
@@ -57,44 +55,5 @@ abstract class BaseRepository implements BaseRepositoryInterface
     {
         return $this->model->where('id', $id)
             ->update($data);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function delete(int $id): bool
-    {
-        return $this->model->where('id', $id)
-            ->delete();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getWithRelation(string $relation): Collection
-    {
-        return $this->model->with($relation)->get();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getByIdAndWithRelations(int $id, array $relations): Builder
-    {
-        return $this->model->where('id', $id)->with($relations);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function save(array $data): Model
-    {
-        $where = [];
-        $primaryKey = $this->model->getKeyName();
-        if (isset($data[$primaryKey]) and ! empty($data[$primaryKey])) {
-            $where = [$primaryKey => $data[$primaryKey]];
-        }
-
-        return $this->model->updateOrCreate($where, $data);
     }
 }

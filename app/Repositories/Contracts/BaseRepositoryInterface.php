@@ -2,7 +2,6 @@
 
 namespace App\Repositories\Contracts;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -46,33 +45,4 @@ interface BaseRepositoryInterface
      * @return mixed
      */
     public function updateById(array $data, int $id): bool;
-
-    /**
-     * @param  int  $id
-     *
-     * @return mixed
-     */
-    public function delete(int $id): bool;
-
-    /**
-     * @param  string  $relation
-     *
-     * @return mixed
-     */
-    public function getWithRelation(string $relation): Collection;
-
-    /**
-     * @param  int  $id
-     * @param  array  $relations
-     *
-     * @return mixed
-     */
-    public function getByIdAndWithRelations(int $id, array $relations): Builder;
-
-    /**
-     * @param  array  $data
-     *
-     * @return Model
-     */
-    public function save(array $data): Model;
 }
