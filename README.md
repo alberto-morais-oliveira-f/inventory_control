@@ -35,12 +35,14 @@ Sistema de controle de estoque e vendas desenvolvido em **Laravel**, com funcion
 
 ## Endpoints Principais
 
-| Método | Endpoint           | Descrição                                                              |
-|--------|--------------------|------------------------------------------------------------------------|
-| POST   | /api/sales         | Registrar uma nova venda                                               |
-| GET    | /api/reports/sales | Relatório de vendas (filtros: `start_date`, `end_date`, `product_sku`) |
-| GET    | /api/inventory     | Listagem de produtos e quantidade em estoque                           |
-
+| Método | Endpoint | Descrição | Controlador |
+|--------|---------|-----------|-------------|
+| POST   | `/api/inventory`       | Criar registro de inventário | `InventoryStoreController` |
+| GET    | `/api/inventory`       | Listar itens do inventário   | `InventoryListController` |
+| POST   | `/api/product`         | Criar produto               | `ProductStoreController` |
+| GET    | `/api/report/sales`    | Relatório de vendas         | `ReportSaleController` |
+| POST   | `/api/sales`           | Registrar venda             | `SaleStoreController` |
+| GET    | `/api/sales`           | Listar vendas               | `InventoryStoreController` |
 Todos os endpoints aceitam **JSON** e retornam respostas no formato padrão Laravel Resource.
 
 ---
