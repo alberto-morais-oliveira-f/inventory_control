@@ -9,6 +9,7 @@ use App\Repositories\Contracts\SaleItemsRepositoryInterface;
 use App\Repositories\Contracts\SaleRepositoryInterface;
 use App\Services\Interfaces\SaleServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Throwable;
@@ -22,8 +23,6 @@ readonly class SaleService implements SaleServiceInterface
     ) {
     }
 
-    // Implement the methods of SaleServiceInterface
-
     /**
      * @throws Throwable
      */
@@ -31,32 +30,12 @@ readonly class SaleService implements SaleServiceInterface
     {
         $items = $data['items'] ?? [];
         $this->validateStock($items);
-        $sale = DB::transaction(function () use (&$items) {
-            $sale = $this->saleRepository->store([
-                'total_amount' => 0,
-                'total_cost' => 0,
-                'total_profit' => 0,
-                'status' => 'pending',
-            ]);
-            foreach ($items as &$item) {
-                $saleItem = $this->saleItemsRepository->store([
-                    'sale_id' => $sale->id,
-                    'product_id' => $item['product_id'],
-                    'quantity' => (int) $item['quantity'],
-                ]);
-                $item['id'] = $saleItem->id;
-            }
-
-            return $sale;
-        });
-
-        ProcessSale::dispatch(
-            $items,
-            $sale->id,
-        )->afterCommit();
+        $sale = $this->createSaleWithItems($items);
+        $this->dispatchSaleJob($sale, $items);
 
         return $sale;
     }
+
 
     public function validateStock(array $items): void
     {
@@ -81,16 +60,47 @@ readonly class SaleService implements SaleServiceInterface
         foreach ($items as $item) {
             $product = $productsMap[$item['product_id']];
             $quantity = (int) $item['quantity'];
-            $unitPrice = (float) $product->sale_price;
-            $unitCost = (float) $product->cost_price;
 
-            $totalAmount += $quantity * $unitPrice;
-            $totalCost += $quantity * $unitCost;
+            $totalAmount += $quantity * (float) $product->sale_price;
+            $totalCost += $quantity * (float) $product->cost_price;
         }
         
 
         $totalProfit = $totalAmount - $totalCost;
 
         return [$totalAmount, $totalCost, $totalProfit];
+    }
+
+    public function getSalesReport(array $filters, int $perPage = 15): LengthAwarePaginator
+    {
+        return $this->saleRepository->getSalesReport($filters, $perPage);
+    }
+
+    private function createSaleWithItems(array &$items): Sale
+    {
+        return DB::transaction(function () use (&$items) {
+            $sale = $this->saleRepository->store([
+                'total_amount' => 0,
+                'total_cost' => 0,
+                'total_profit' => 0,
+                'status' => 'pending',
+            ]);
+
+            foreach ($items as &$item) {
+                $saleItem = $this->saleItemsRepository->store([
+                    'sale_id' => $sale->id,
+                    'product_id' => $item['product_id'],
+                    'quantity' => (int) $item['quantity'],
+                ]);
+                $item['id'] = $saleItem->id;
+            }
+
+            return $sale;
+        });
+    }
+
+    private function dispatchSaleJob(Sale $sale, array $items): void
+    {
+        ProcessSale::dispatch($items, $sale->id)->afterCommit();
     }
 }

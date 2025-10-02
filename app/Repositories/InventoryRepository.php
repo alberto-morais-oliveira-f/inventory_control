@@ -25,7 +25,7 @@ class InventoryRepository extends BaseRepository implements InventoryRepositoryI
     {
         return $this->model->query()
             ->join('products as p', 'p.id', '=', 'inventory.product_id')
-            ->select(
+            ->select([
                 'p.id as product_id',
                 'p.sku',
                 'p.name',
@@ -33,8 +33,8 @@ class InventoryRepository extends BaseRepository implements InventoryRepositoryI
                 DB::raw('SUM(inventory.quantity * p.cost_price) as total_cost'),
                 DB::raw('SUM(inventory.quantity * p.sale_price) as total_sale'),
                 DB::raw('(SUM(inventory.quantity * p.sale_price) - SUM(inventory.quantity * p.cost_price)) as projected_profit')
-            )
-            ->groupBy('p.id', 'p.sku', 'p.name')
+            ])
+            ->groupBy('p.id') // só id, mais performático
             ->orderBy('p.name')
             ->get();
     }

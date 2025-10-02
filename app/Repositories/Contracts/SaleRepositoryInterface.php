@@ -2,7 +2,9 @@
 
 namespace App\Repositories\Contracts;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+
 interface SaleRepositoryInterface extends BaseRepositoryInterface
 {
-    // Define methods for Sale
+    public function getSalesReport(array $filters, int $perPage = 15): LengthAwarePaginator;
 }
