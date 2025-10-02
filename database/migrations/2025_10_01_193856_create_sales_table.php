@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
-            $table->decimal('total_amount')->nullable();
-            $table->decimal('total_cost')->nullable();
-            $table->decimal('total_profit')->nullable();
+            $table->decimal('total_amount')->default(0);
+            $table->decimal('total_cost')->default(0);
+            $table->decimal('total_profit')->default(0);
             $table->string('status')->default('pending');
             $table->timestamps();
             $table->softDeletes();

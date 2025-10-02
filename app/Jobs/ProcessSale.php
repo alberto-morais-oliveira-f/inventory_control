@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Models\Sale;
 use App\Repositories\Contracts\InventoryRepositoryInterface;
 use App\Repositories\Contracts\ProductsRepositoryInterface;
 use App\Repositories\Contracts\SaleItemsRepositoryInterface;
@@ -13,7 +12,10 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use RuntimeException;
 use Throwable;
 
 class ProcessSale implements ShouldQueue
@@ -25,7 +27,7 @@ class ProcessSale implements ShouldQueue
      */
     public function __construct(
         public array $items,
-        public Sale $sale,
+        public int $saleId,
     ) {
     }
 
@@ -41,42 +43,65 @@ class ProcessSale implements ShouldQueue
         ProductsRepositoryInterface $productsRepository,
         SaleServiceInterface $saleService
     ): void {
-        DB::transaction(function () use (
-            $saleRepository,
-            $inventoryRepository,
-            $saleItemsRepository,
-            $productsRepository,
-            $saleService
-        ) {
-            foreach ($this->items as $item) {
-                $productIds = array_column($this->items, 'product_id');
-                $products = $productsRepository->getByValuesIn('id', $productIds);
-                $productsMap = $products->keyBy('id')->all();
-                $product = $productsMap[$item['product_id']];
+        $sale = $saleRepository->getById($this->saleId);
+        if (! $sale) {
+            Log::error("Venda ($this->saleId) não encontrada!");
 
-                $inventoryRepository->store([
-                    'product_id' => $item['product_id'],
-                    'quantity' => -(int) $item['quantity'],
-                    'last_updated' => now(),
-                ]);
+            return;
+        }
 
-                $saleItemsRepository->store([
-                    'sale_id' => $this->sale->id,
-                    'product_id' => $item['product_id'],
-                    'quantity' => (int) $item['quantity'],
-                    'unit_price' => $product->sale_price,
-                    'unit_cost' => $product->cost_price,
-                ]);
-            }
+        foreach ($this->items as $item) {
+            $productId = $item['product_id'];
 
-            [$totalAmount, $totalCost, $totalProfit] = $saleService->calculateTotals($this->items, $productsMap);
+            Cache::lock("product_stock_{$productId}", 10)->block(5, function () use (
+                $item,
+                $inventoryRepository,
+                $saleItemsRepository,
+                $productsRepository,
+            ) {
+                DB::transaction(function () use (
+                    $item,
+                    $inventoryRepository,
+                    $saleItemsRepository,
+                    $productsRepository,
+                ) {
+                    $product = $productsRepository->getById($item['product_id']);
+                    if (! $product) {
+                        throw new RuntimeException("Produto {$item['product_id']} não encontrado");
+                    }
 
-            $saleRepository->updateById([
-                'total_amount' => $totalAmount,
-                'total_cost' => $totalCost,
-                'total_profit' => $totalProfit,
-                'status' => 'completed',
-            ], $this->sale->id);
-        });
+                    // Revalida estoque dentro do lock
+                    $available = $inventoryRepository->countItem($product->id);
+                    if ($available < $item['quantity']) {
+                        throw new RuntimeException("Estoque insuficiente para o produto {$product->id}");
+                    }
+
+                    // Atualiza estoque
+                    $inventoryRepository->store([
+                        'product_id' => $product->id,
+                        'quantity' => -(int) $item['quantity'],
+                        'last_updated' => now(),
+                    ]);
+
+                    // Atualiza itens da venda
+                    $saleItemsRepository->updateById([
+                        'unit_price' => $product->sale_price,
+                        'unit_cost' => $product->cost_price,
+                    ], $item['id']);
+                });
+            });
+        }
+
+        // Atualiza totais e status da venda
+        $productIds = array_column($this->items, 'product_id');
+        $products = $productsRepository->getByValuesIn('id', $productIds)->keyBy('id');
+        [$totalAmount, $totalCost, $totalProfit] = $saleService->calculateTotals($this->items, $products);
+
+        $saleRepository->updateById([
+            'total_amount' => $totalAmount,
+            'total_cost' => $totalCost,
+            'total_profit' => $totalProfit,
+            'status' => 'completed',
+        ], $sale->id);
     }
 }

@@ -5,10 +5,10 @@ namespace App\Services;
 use App\Jobs\ProcessSale;
 use App\Models\Sale;
 use App\Repositories\Contracts\InventoryRepositoryInterface;
-use App\Repositories\Contracts\ProductsRepositoryInterface;
 use App\Repositories\Contracts\SaleItemsRepositoryInterface;
 use App\Repositories\Contracts\SaleRepositoryInterface;
 use App\Services\Interfaces\SaleServiceInterface;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Throwable;
@@ -18,7 +18,6 @@ readonly class SaleService implements SaleServiceInterface
     public function __construct(
         private SaleRepositoryInterface $saleRepository,
         private InventoryRepositoryInterface $inventoryRepository,
-        private ProductsRepositoryInterface $productsRepository,
         private SaleItemsRepositoryInterface $saleItemsRepository,
     ) {
     }
@@ -32,16 +31,20 @@ readonly class SaleService implements SaleServiceInterface
     {
         $items = $data['items'] ?? [];
         $this->validateStock($items);
-        $sale = DB::transaction(function () use ($items) {
+        $sale = DB::transaction(function () use (&$items) {
             $sale = $this->saleRepository->store([
+                'total_amount' => 0,
+                'total_cost' => 0,
+                'total_profit' => 0,
                 'status' => 'pending',
             ]);
-            foreach ($items as $item) {
-                $this->saleItemsRepository->store([
+            foreach ($items as &$item) {
+                $saleItem = $this->saleItemsRepository->store([
                     'sale_id' => $sale->id,
                     'product_id' => $item['product_id'],
                     'quantity' => (int) $item['quantity'],
                 ]);
+                $item['id'] = $saleItem->id;
             }
 
             return $sale;
@@ -49,8 +52,8 @@ readonly class SaleService implements SaleServiceInterface
 
         ProcessSale::dispatch(
             $items,
-            $sale
-        );
+            $sale->id,
+        )->afterCommit();
 
         return $sale;
     }
@@ -71,20 +74,20 @@ readonly class SaleService implements SaleServiceInterface
         }
     }
 
-    public function calculateTotals(array $items, array $productsMap): array
+    public function calculateTotals(array $items, Collection $productsMap): array
     {
         $totalAmount = 0;
         $totalCost = 0;
-
         foreach ($items as $item) {
             $product = $productsMap[$item['product_id']];
             $quantity = (int) $item['quantity'];
-            $unitPrice = (float) $product['unit_price'];
-            $unitCost = (float) $product['unit_cost'];
+            $unitPrice = (float) $product->sale_price;
+            $unitCost = (float) $product->cost_price;
 
             $totalAmount += $quantity * $unitPrice;
             $totalCost += $quantity * $unitCost;
         }
+        
 
         $totalProfit = $totalAmount - $totalCost;
 

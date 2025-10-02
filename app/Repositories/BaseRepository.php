@@ -6,6 +6,7 @@ use App\Repositories\Contracts\BaseRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 
 abstract class BaseRepository implements BaseRepositoryInterface
 {
@@ -20,7 +21,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function getById(int $id): Model
+    public function getById(int $id): ?Model
     {
         return $this->model->find($id);
     }

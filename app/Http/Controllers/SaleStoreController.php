@@ -16,9 +16,9 @@ class SaleStoreController extends Controller
     public function __invoke(SaleStoreRequest $request): JsonResponse
     {
         try {
-            $this->saleService->register($request->validated());
+            $sale = $this->saleService->register($request->validated());
 
-            return response()->json(['message' => 'Venda registrada com sucesso!.']);
+            return response()->json(['message' => "Venda #{$sale->id} registrada com sucesso!."]);
         } catch (\Exception $exception) {
             dd($exception);
             return response()->json(['message' => 'Error inesperado do servidor'],

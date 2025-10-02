@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ProductCreateTest extends TestCase
@@ -16,7 +17,8 @@ class ProductCreateTest extends TestCase
         $this->createUserSanctum();
     }
 
-    public function test_create_product_error_validation(): void
+    #[Test]
+    public function it_create_product_error_validation(): void
     {
         $costPrice = $this->faker->randomFloat(2, 10, 100);
         $response = $this->postJson('/api/product', [
@@ -29,7 +31,8 @@ class ProductCreateTest extends TestCase
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    public function test_create_product_success(): void
+    #[Test]
+    public function it_create_product_success(): void
     {
         $costPrice = $this->faker->randomFloat(2, 10, 100);
 

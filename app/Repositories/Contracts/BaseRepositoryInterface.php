@@ -13,9 +13,9 @@ interface BaseRepositoryInterface
      *
      * @param  int  $id
      *
-     * @return mixed
+     * @return Model|null
      */
-    public function getById(int $id): Model;
+    public function getById(int $id): ?Model;
 
     /**
      * Get all registers
