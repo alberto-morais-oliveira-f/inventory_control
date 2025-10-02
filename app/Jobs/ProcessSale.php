@@ -93,6 +93,7 @@ class ProcessSale implements ShouldQueue
     {
         $available = $inventoryRepository->countItem($product->id);
         if ($available < $item['quantity']) {
+            Log::info('Produto em falta: '. $product->name);
             throw new RuntimeException("Estoque insuficiente para o produto {$product->id}");
         }
     }
