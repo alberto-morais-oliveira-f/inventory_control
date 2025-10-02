@@ -21,8 +21,6 @@ readonly class InventoryService implements InventoryServiceInterface
         private ProductServiceInterface $productService,
     ) {}
 
-    // Implement the methods of InventoryServiceInterface
-
     /**
      * @throws Throwable|ProductException
      */
