@@ -108,3 +108,11 @@ php artisan queue:work
 ```bash
 php artisan test
 ```
+
+##### Estratégias usadas para melhoria de performance
+
+- Uso de **cache com Redis** para acelerar consultas e controlar locks de concorrência.
+- **Sanctum** para autenticação e segurança das requisições API.
+- **Transações de banco** para garantir consistência e integridade durante o registro de vendas e atualização de estoque.
+- Processamento assíncrono de vendas via **jobs**, com mecanismos de verificação de concorrência para garantir que a quantidade de produtos no estoque seja respeitada.
+
