@@ -7,13 +7,12 @@ use App\Services\Interfaces\InventoryServiceInterface;
 
 class InventoryListController extends Controller
 {
-    public function __construct(private readonly InventoryServiceInterface $inventoryService)
-    {
-    }
+    public function __construct(private readonly InventoryServiceInterface $inventoryService) {}
 
     public function __invoke()
     {
         $dataInventory = $this->inventoryService->getInventory();
+
         return InventoryResource::collection($dataInventory);
     }
 }

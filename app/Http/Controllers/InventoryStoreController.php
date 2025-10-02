@@ -10,9 +10,7 @@ use Throwable;
 
 class InventoryStoreController extends Controller
 {
-    public function __construct(private readonly InventoryServiceInterface $inventoryService)
-    {
-    }
+    public function __construct(private readonly InventoryServiceInterface $inventoryService) {}
 
     public function __invoke(InventoryStoreRequest $request)
     {

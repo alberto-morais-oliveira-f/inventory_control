@@ -32,7 +32,7 @@ class InventoryRepository extends BaseRepository implements InventoryRepositoryI
                 DB::raw('SUM(inventory.quantity) as total_quantity'),
                 DB::raw('SUM(inventory.quantity * p.cost_price) as total_cost'),
                 DB::raw('SUM(inventory.quantity * p.sale_price) as total_sale'),
-                DB::raw('(SUM(inventory.quantity * p.sale_price) - SUM(inventory.quantity * p.cost_price)) as projected_profit')
+                DB::raw('(SUM(inventory.quantity * p.sale_price) - SUM(inventory.quantity * p.cost_price)) as projected_profit'),
             ])
             ->groupBy('p.id') // só id, mais performático
             ->orderBy('p.name')

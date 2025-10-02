@@ -20,7 +20,7 @@ class SaleItemFactory extends Factory
             'product_id' => $product->id,
             'quantity' => $this->faker->numberBetween(1, 10),
             'unit_price' => $product->sale_price,
-            'unit_cost' => $product->cost_price
+            'unit_cost' => $product->cost_price,
         ];
     }
 }

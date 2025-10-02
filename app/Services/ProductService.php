@@ -8,9 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 readonly class ProductService implements ProductServiceInterface
 {
-    public function __construct(private ProductsRepositoryInterface $productsRepository)
-    {
-    }
+    public function __construct(private ProductsRepositoryInterface $productsRepository) {}
 
     public function register(array $data): Model
     {

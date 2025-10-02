@@ -31,7 +31,7 @@ class MakeService extends Command
 
         $serviceNamespace = 'App\\Services'.($namespacePath !== '.' ? '\\'.str_replace('/', '\\', $namespacePath) : '');
         $interfaceNamespace = 'App\\Services\\Interfaces'.($namespacePath !== '.' ? '\\'.str_replace('/', '\\',
-                    $namespacePath) : '');
+            $namespacePath) : '');
 
         $servicePath = app_path("Services/{$normalizedPath}Service.php");
         $interfacePath = app_path("Services/Interfaces/{$normalizedPath}ServiceInterface.php");

@@ -22,8 +22,11 @@ class SaleStoreTest extends TestCase
     #[Test]
     public function it_create_sale_success(): void
     {
+        // Arrange
         $product = Product::inRandomOrder()->first();
         Inventory::factory()->create(['product_id' => $product->id, 'quantity' => 10]);
+
+        // Act
         $response = $this->postJson(route('sale-store'), [
             'items' => [
                 [
@@ -33,6 +36,7 @@ class SaleStoreTest extends TestCase
             ],
         ]);
 
+        // Assert
         $response->assertStatus(Response::HTTP_OK);
         $this->assertDatabaseHas('sales', [
             'status' => 'pending', // porque vai pro job async

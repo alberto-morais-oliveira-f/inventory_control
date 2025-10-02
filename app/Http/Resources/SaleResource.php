@@ -15,13 +15,13 @@ class SaleResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'           => $this['id'],
-            'status'       => $this['status'],
+            'id' => $this['id'],
+            'status' => $this['status'],
             'total_amount' => $this['total_amount'],
-            'total_cost'   => $this['total_cost'],
+            'total_cost' => $this['total_cost'],
             'total_profit' => $this['total_profit'],
-            'created_at'   => $this['created_at'],
-            'items'        => SaleItemResource::collection($this['items']),
+            'created_at' => $this['created_at'],
+            'items' => SaleItemResource::collection($this['items']),
         ];
     }
 }

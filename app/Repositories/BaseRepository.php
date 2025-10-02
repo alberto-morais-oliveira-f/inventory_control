@@ -3,12 +3,11 @@
 namespace App\Repositories;
 
 use App\Repositories\Contracts\BaseRepositoryInterface;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 abstract class BaseRepository implements BaseRepositoryInterface
 {
-    /** @var Model */
     protected Model $model;
 
     public function __construct(Model $model)
@@ -17,7 +16,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getById(int $id): ?Model
     {
@@ -25,7 +24,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function all(): Collection
     {
@@ -33,7 +32,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getByValuesIn(string $field, array $values): Collection
     {
@@ -41,7 +40,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function store(array $data): Model
     {
@@ -49,7 +48,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function updateById(array $data, int $id): bool
     {

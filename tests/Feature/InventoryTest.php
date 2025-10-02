@@ -24,8 +24,10 @@ class InventoryTest extends TestCase
     #[Test]
     public function it_create_inventory_success(): void
     {
+        // Arrange
         $costPrice = $this->faker->randomFloat(2, 10, 100);
 
+        // Act
         $response = $this->postJson(route('inventory.store'), [
             'quantity' => $this->faker->numberBetween(1, 50),
             'product_id' => Product::inRandomOrder()->first()->id,
@@ -33,7 +35,7 @@ class InventoryTest extends TestCase
             'sale_price' => addPercentage(10, $costPrice),
         ]);
 
-
+        // Assert
         $response->assertJsonFragment(['message' => 'Inventory registrado com sucesso.']);
         $response->assertStatus(Response::HTTP_OK);
     }
@@ -41,14 +43,17 @@ class InventoryTest extends TestCase
     #[Test]
     public function it_create_inventory_validate_error(): void
     {
+        // Arrange
         $costPrice = $this->faker->randomFloat(2, 10, 100);
 
+        // Act
         $response = $this->postJson(route('inventory.store'), [
             'product_id' => Product::inRandomOrder()->first()->id,
             'cost_price' => $costPrice,
             'sale_price' => addPercentage(10, $costPrice),
         ]);
 
+        // Assert
         $response->assertJsonFragment([
             'message' => 'The quantity field is required.',
             'errors' => [
@@ -61,12 +66,14 @@ class InventoryTest extends TestCase
     #[Test]
     public function it_show_inventory_success(): void
     {
+        // Arrange
         Inventory::factory(10)->create();
         $response = $this->getJson(route('inventory.index'));
         $inventory = $this->app->make(InventoryRepositoryInterface::class);
         $data = $inventory->list();
         $expected = InventoryResource::collection($data)->resolve();
 
+        // Act | Assert
         $response
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonFragment(['data' => $expected])

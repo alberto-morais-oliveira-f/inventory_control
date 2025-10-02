@@ -20,13 +20,18 @@ class ProductCreateTest extends TestCase
     #[Test]
     public function it_create_product_error_validation(): void
     {
+        // Arrange
         $costPrice = $this->faker->randomFloat(2, 10, 100);
+
+        // Act
         $response = $this->postJson('/api/product', [
             'name' => $this->faker->words(2, true),
             'description' => $this->faker->words(20, true),
             'cost_price' => $costPrice,
             'sale_price' => addPercentage(10, $costPrice),
         ]);
+
+        // Assert
         $response->assertJsonFragment(['message' => 'The sku field is required.']);
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
@@ -34,8 +39,10 @@ class ProductCreateTest extends TestCase
     #[Test]
     public function it_create_product_success(): void
     {
+        // Arrange
         $costPrice = $this->faker->randomFloat(2, 10, 100);
 
+        // Act
         $response = $this->postJson('/api/product', [
             'sku' => $this->faker->unique()->text(14),
             'name' => $this->faker->words(2, true),
@@ -44,6 +51,7 @@ class ProductCreateTest extends TestCase
             'sale_price' => addPercentage(10, $costPrice),
         ]);
 
+        // Assert
         $response->assertJsonFragment(['message' => 'Produto cadastrado com sucesso!']);
         $response->assertStatus(Response::HTTP_OK);
     }

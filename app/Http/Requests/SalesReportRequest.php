@@ -15,9 +15,9 @@ class SalesReportRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'start_date'   => ['nullable', 'date'],
-            'end_date'     => ['nullable', 'date'],
-            'product_sku'  => ['nullable', 'string'],
+            'start_date' => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date'],
+            'product_sku' => ['nullable', 'string'],
         ];
     }
 }

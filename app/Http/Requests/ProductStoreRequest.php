@@ -16,7 +16,7 @@ class ProductStoreRequest extends FormRequest
     {
         return [
             'sku' => ['required', 'string'],
-            'name'=> ['required', 'string'],
+            'name' => ['required', 'string'],
             'description' => ['required', 'string'],
             'cost_price' => ['required', 'numeric', 'min:0'],
             'sale_price' => ['required', 'numeric', 'min:0'],

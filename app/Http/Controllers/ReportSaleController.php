@@ -8,9 +8,7 @@ use App\Services\Interfaces\SaleServiceInterface;
 
 class ReportSaleController extends Controller
 {
-    public function __construct(private readonly SaleServiceInterface $saleService)
-    {
-    }
+    public function __construct(private readonly SaleServiceInterface $saleService) {}
 
     public function __invoke(SalesReportRequest $request)
     {

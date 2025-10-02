@@ -26,8 +26,7 @@ class ProcessSale implements ShouldQueue
     public function __construct(
         public array $items,
         public int $saleId,
-    ) {
-    }
+    ) {}
 
     /**
      * Execute the job.
@@ -64,12 +63,14 @@ class ProcessSale implements ShouldQueue
         if (! $sale) {
             Log::error("Venda ({$this->saleId}) não encontrada!");
         }
+
         return $sale;
     }
 
     private function loadProducts(ProductsRepositoryInterface $productsRepository): Collection
     {
         $productIds = array_column($this->items, 'product_id');
+
         return $productsRepository->getByValuesIn('id', $productIds)->keyBy('id');
     }
 

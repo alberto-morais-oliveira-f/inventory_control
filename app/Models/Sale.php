@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Sale extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'total_amount',
         'total_cost',

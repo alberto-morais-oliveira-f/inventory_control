@@ -20,8 +20,7 @@ readonly class InventoryService implements InventoryServiceInterface
     public function __construct(
         private InventoryRepository $inventoryRepository,
         private ProductServiceInterface $productService,
-    ) {
-    }
+    ) {}
 
     // Implement the methods of InventoryServiceInterface
 
@@ -32,8 +31,7 @@ readonly class InventoryService implements InventoryServiceInterface
     {
         return DB::transaction(function () use ($data) {
             [$partialProduct, $inventory] = $this->handleDataRegister($data);
-            throw_unless($this->productService->updateById($partialProduct, $inventory['product_id']), new
-            ProductException('Erro ao atualizar produto'));
+            throw_unless($this->productService->updateById($partialProduct, $inventory['product_id']), new ProductException('Erro ao atualizar produto'));
             $inventory = $this->inventoryRepository->store($inventory);
 
             Cache::forget(self::CACHE_KEY_INVENTORY);
@@ -78,7 +76,7 @@ readonly class InventoryService implements InventoryServiceInterface
 
             if ($stock < $requested) {
                 throw ValidationException::withMessages([
-                    "items" => "Estoque insuficiente para o produto {$productId}. Disponível: {$stock}"
+                    'items' => "Estoque insuficiente para o produto {$productId}. Disponível: {$stock}",
                 ]);
             }
         }

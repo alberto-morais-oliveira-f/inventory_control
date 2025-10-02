@@ -18,7 +18,6 @@ class SaleItem extends Model
         'unit_cost',
     ];
 
-
     public function sale(): BelongsTo
     {
         return $this->belongsTo(Sale::class);

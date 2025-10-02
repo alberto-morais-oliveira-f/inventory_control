@@ -5,7 +5,6 @@ namespace App\Providers;
 use App\Services\Interfaces\InventoryServiceInterface;
 use App\Services\Interfaces\ProductServiceInterface;
 use App\Services\InventoryService;
-
 use App\Services\ProductService;
 use Illuminate\Support\ServiceProvider;
 

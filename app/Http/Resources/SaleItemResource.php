@@ -16,11 +16,11 @@ class SaleItemResource extends JsonResource
     {
         return [
             'product_id' => $this['product_id'],
-            'sku'        => $this['sku'] ?? null,
-            'name'       => $this['name'] ?? null,
-            'quantity'   => $this['quantity'],
+            'sku' => $this['sku'] ?? null,
+            'name' => $this['name'] ?? null,
+            'quantity' => $this['quantity'],
             'unit_price' => $this['unit_price'],
-            'unit_cost'  => $this['unit_cost'],
+            'unit_cost' => $this['unit_cost'],
         ];
     }
 }

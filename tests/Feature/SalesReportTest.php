@@ -14,15 +14,10 @@ class SalesReportTest extends TestCase
     #[Test]
     public function it_sales_report_with_filters_and_pagination(): void
     {
+        // Arrange
         $this->createUserSanctum();
-
-        // Criar produtos
         $products = Product::inRandomOrder()->get();
-
-        // Criar vendas
         $sales = Sale::factory(5)->create();
-
-        // Criar itens de venda
         foreach ($sales as $sale) {
             foreach ($products as $product) {
                 SaleItem::factory()->create([
@@ -35,11 +30,11 @@ class SalesReportTest extends TestCase
             }
         }
 
-        // Filtro: start_date/end_date + SKU
         $startDate = now()->subDay()->toDateString();
         $endDate = now()->addDay()->toDateString();
         $sku = $products[0]->sku;
 
+        // Act
         $response = $this->getJson(route('report.sales', [
             'start_date' => $startDate,
             'end_date' => $endDate,
@@ -47,10 +42,9 @@ class SalesReportTest extends TestCase
             'per_page' => 2,
         ]));
 
-
+        // Assert
         $response->assertStatus(Response::HTTP_OK);
 
-        // Estrutura do JSON (paginação + items)
         $response->assertJsonStructure([
             'data' => [
                 '*' => [
@@ -75,7 +69,6 @@ class SalesReportTest extends TestCase
             'paginate',
         ]);
 
-        // Garantir que tenha pelo menos uma venda com o SKU filtrado
         $this->assertNotEmpty($response->json('data.0.items'));
         $this->assertEquals($sku, $response->json('data.0.items.0.sku'));
     }

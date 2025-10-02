@@ -21,15 +21,15 @@ class SaleRepository extends BaseRepository implements SaleRepositoryInterface
         $query = Sale::query()
             ->with(['items.product']); // já carrega os produtos
 
-        if (!empty($filters['start_date'])) {
+        if (! empty($filters['start_date'])) {
             $query->whereDate('created_at', '>=', $filters['start_date']);
         }
 
-        if (!empty($filters['end_date'])) {
+        if (! empty($filters['end_date'])) {
             $query->whereDate('created_at', '<=', $filters['end_date']);
         }
 
-        if (!empty($filters['product_sku'])) {
+        if (! empty($filters['product_sku'])) {
             $sku = $filters['product_sku'];
             $query->whereHas('items.product', fn ($q) => $q->where('sku', $sku));
         }

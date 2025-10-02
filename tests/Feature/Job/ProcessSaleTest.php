@@ -18,7 +18,7 @@ class ProcessSaleTest extends TestCase
     #[Test]
     public function it_job_processes_sale_when_stock_is_sufficient(): void
     {
-        // Cria produtos e estoque
+        // Arrange
         $product = Product::inRandomOrder()->first();
         Inventory::factory()->create(['product_id' => $product->id, 'quantity' => 10]);
 
@@ -29,21 +29,23 @@ class ProcessSaleTest extends TestCase
             'quantity' => 5,
         ]);
 
-        ProcessSale::dispatchSync(
-            [['id' => $saleItem->id, 'product_id' => $product->id, 'quantity' => 5]],
-            $sale->id
-        );
-
-        $this->assertDatabaseHas('inventory', [
-            'product_id' => $product->id,
-            'quantity' => -5,
-        ]);
-
         $saleService = app(SaleServiceInterface::class);
         $productsRepository = app(ProductsRepositoryInterface::class);
         $products = $productsRepository->getByValuesIn('id', [$product->id])->keyBy('id');
 
         [$totalAmount, $totalCost, $totalProfit] = $saleService->calculateTotals([$saleItem->toArray()], $products);
+
+        // Act
+        ProcessSale::dispatchSync(
+            [['id' => $saleItem->id, 'product_id' => $product->id, 'quantity' => 5]],
+            $sale->id
+        );
+
+        // Assert
+        $this->assertDatabaseHas('inventory', [
+            'product_id' => $product->id,
+            'quantity' => -5,
+        ]);
 
         $this->assertDatabaseHas('sales', [
             'id' => $sale->id,
@@ -57,6 +59,7 @@ class ProcessSaleTest extends TestCase
     #[Test]
     public function it_job_fails_when_stock_is_insufficient(): void
     {
+        // Arrange
         $product = Product::inRandomOrder()->first();
         Inventory::factory()->create(['product_id' => $product->id, 'quantity' => 3]);
 
@@ -70,11 +73,13 @@ class ProcessSaleTest extends TestCase
 
         $this->expectException(RuntimeException::class); // Estoque insuficiente
 
+        // Act
         ProcessSale::dispatchSync(
             [['id' => $saleItem->id, 'product_id' => $product->id, 'quantity' => 5]],
             $sale->id
         );
 
+        // Assert
         $this->assertDatabaseHas('inventory', [
             'product_id' => $product->id,
             'quantity' => 3,

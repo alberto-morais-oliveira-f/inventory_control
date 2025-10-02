@@ -11,9 +11,7 @@ use Throwable;
 
 class ProductStoreController extends Controller
 {
-    public function __construct(private readonly ProductServiceInterface $productService)
-    {
-    }
+    public function __construct(private readonly ProductServiceInterface $productService) {}
 
     /**
      * Display a listing of the resource.

@@ -20,8 +20,7 @@ readonly class SaleService implements SaleServiceInterface
         private SaleRepositoryInterface $saleRepository,
         private InventoryRepositoryInterface $inventoryRepository,
         private SaleItemsRepositoryInterface $saleItemsRepository,
-    ) {
-    }
+    ) {}
 
     /**
      * @throws Throwable
@@ -36,7 +35,6 @@ readonly class SaleService implements SaleServiceInterface
         return $sale;
     }
 
-
     public function validateStock(array $items): void
     {
         foreach ($items as $item) {
@@ -47,7 +45,7 @@ readonly class SaleService implements SaleServiceInterface
 
             if ($stock < $requested) {
                 throw ValidationException::withMessages([
-                    "items" => "Estoque insuficiente para o produto {$productId}. Disponível: {$stock}",
+                    'items' => "Estoque insuficiente para o produto {$productId}. Disponível: {$stock}",
                 ]);
             }
         }
@@ -64,7 +62,6 @@ readonly class SaleService implements SaleServiceInterface
             $totalAmount += $quantity * (float) $product->sale_price;
             $totalCost += $quantity * (float) $product->cost_price;
         }
-        
 
         $totalProfit = $totalAmount - $totalCost;
 

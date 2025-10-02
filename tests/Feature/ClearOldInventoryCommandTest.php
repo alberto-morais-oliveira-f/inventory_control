@@ -9,30 +9,28 @@ use Tests\TestCase;
 
 class ClearOldInventoryCommandTest extends TestCase
 {
-     #[Test]
+    #[Test]
     public function it_deletes_only_inventory_older_than_90_days(): void
     {
-        // Creates old record (100 days)
+        // Arrange
         $oldInventory = Inventory::factory(10)->create([
             'last_updated' => Carbon::now()->subDays(100),
         ]);
 
-        // Creates recent record (10 days)
         $recentInventory = Inventory::factory(20)->create([
             'last_updated' => Carbon::now()->subDays(10),
         ]);
 
-        // Execute the command
+        // Act
         $this->artisan('inventory:clear-old')
             ->expectsOutput('10 registros de estoque antigos foram removidos.')
             ->assertExitCode(0);
 
-        // Verify that the old one has been removed
+        // Assert
         $this->assertDatabaseMissing('inventory', [
             'id' => $oldInventory->first()->id,
         ]);
 
-        // Check that the recent continues
         $this->assertDatabaseHas('inventory', [
             'id' => $recentInventory->first()->id,
         ]);
