@@ -17,6 +17,9 @@ interface BaseRepositoryInterface
      */
     public function all(): Collection;
 
+    /**
+     * Get registers filter field and values
+     */
     public function getByValuesIn(string $field, array $values): Collection;
 
     /**

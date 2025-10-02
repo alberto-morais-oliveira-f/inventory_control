@@ -59,11 +59,9 @@ readonly class InventoryService implements InventoryServiceInterface
     {
         Cache::forget(self::CACHE_KEY_INVENTORY);
 
-        $data = Cache::remember(self::CACHE_KEY_INVENTORY, 300, function () {
+        return Cache::remember(self::CACHE_KEY_INVENTORY, 300, function () {
             return $this->inventoryRepository->list();
         });
-
-        return $data;
     }
 
     public function validateStock(array $items): void
