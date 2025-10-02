@@ -103,7 +103,7 @@ class ProcessSale implements ShouldQueue
     {
         $inventoryRepository->store([
             'product_id' => $product->id,
-            'quantity' => -(int) $item['quantity'],
+            'quantity' => -($item['quantity']),
             'last_updated' => now(),
         ]);
     }
