@@ -35,11 +35,11 @@ Sistema de controle de estoque e vendas desenvolvido em **Laravel**, com funcion
 
 ## Endpoints Principais
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST   | /api/sales | Registrar uma nova venda |
+| Método | Endpoint           | Descrição                                                              |
+|--------|--------------------|------------------------------------------------------------------------|
+| POST   | /api/sales         | Registrar uma nova venda                                               |
 | GET    | /api/reports/sales | Relatório de vendas (filtros: `start_date`, `end_date`, `product_sku`) |
-| GET    | /api/inventory | Listagem de produtos e quantidade em estoque |
+| GET    | /api/inventory     | Listagem de produtos e quantidade em estoque                           |
 
 Todos os endpoints aceitam **JSON** e retornam respostas no formato padrão Laravel Resource.
 
@@ -48,19 +48,25 @@ Todos os endpoints aceitam **JSON** e retornam respostas no formato padrão Lara
 ## Instalação
 
 1. Clone o repositório:
+
 ```bash
   git clone git@github.com:alberto-morais-oliveira-f/inventory_control.git
 ```
+
 2. Acesse o projeto:
+
 ```bash
 cd inventory_control
 ```
+
 3. Instale as dependências:
+
 ```bash
 composer install
 ```
 
 4. Configure o .env:
+
 ```bash
 APP_NAME="Inventory Control"
 APP_ENV=local
@@ -80,15 +86,25 @@ REDIS_HOST=127.0.0.1
 REDIS_PASSWORD=null
 REDIS_PORT=6379
 ```
-### Obs: Usei o redis para a job, mas pode usar sync ou database.
+
+#### Obs: Usei o redis para a job, mas pode usar sync ou database.
 
 5. Rode migrations e seeders:
+
+```bash
+php artisan migrate --seed
+```
+
+6. Rode as filas:
+
 ```bash
 php artisan queue:work
 ```
-### Obs: Para verificar o processamento da venda como atualização de valores e alteração do status deve rodar a fila.
+
+#### Obs: Para verificar o processamento da venda como atualização de valores e alteração do status deve rodar a fila.
 
 5. Execute os testes unitários e de integração:
+
 ```bash
 php artisan test
 ```
